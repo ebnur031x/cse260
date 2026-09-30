@@ -254,11 +254,11 @@ This means:
 Visual:
 
 ~~~text
-  1
-  4 7
-+ 3 6
------
-    5
+       1    ← this is 8¹
+       4    7
+     + 3    6
+     --------
+            5    ← this is 8⁰
 ~~~
 
 ## Step 2 — the next column
