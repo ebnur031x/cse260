@@ -254,7 +254,7 @@ This means:
 Visual:
 
 ~~~text
-    1
+  1
   4 7
 + 3 6
 -----
