@@ -555,3 +555,782 @@ Once that clicked, the operations started looking much more normal.
 **Multiplication in different bases.**
 
 I should not move on until the carry/borrow mechanism feels natural, but I also don't need to keep re-explaining it once it does.
+
+---
+
+# 15. Multiplication and division — the distinction I need to keep clear
+
+This is where I had to slow down.
+
+There are **two main paths** when doing arithmetic in another base.
+
+### A. Direct
+
+Stay inside the original base.
+
+~~~text
+base-r number
+     ↓
+arithmetic directly in base-r
+     ↓
+base-r answer
+~~~
+
+There is no middleman.
+
+### B. Conversion / middleman
+
+Use decimal as the bridge.
+
+~~~text
+base-r
+  ↓
+decimal
+  ↓
+arithmetic
+  ↓
+base-r
+~~~
+
+Decimal is the **middleman**.
+
+Both are mathematically valid unless the question specifically restricts the method.
+
+There is also a useful **hybrid/helper** approach:
+
+~~~text
+base-r divisor
+     ↓
+convert divisor to decimal
+     ↓
+calculate useful multiples in decimal
+     ↓
+convert those multiples back to base-r
+     ↓
+use them to choose the quotient digit
+~~~
+
+This is not pure direct arithmetic because decimal is helping in the middle.
+
+---
+
+# 16. Base-r multiplication — what finally clicked
+
+For direct multiplication, the long-multiplication structure is normal.
+
+The important rule is:
+
+> **Calculate the quantity first, then write that quantity in the working base.**
+
+For example:
+
+~~~text
+23₅ × 14₅
+~~~
+
+Start with the rightmost multiplier digit:
+
+~~~text
+3 × 4 = 12₁₀
+~~~
+
+I cannot just write 12 as a base-5 result because 12₅ means a different quantity.
+
+Convert 12 decimal to base 5:
+
+~~~text
+12 ÷ 5 = 2 R 2
+ 2 ÷ 5 = 0 R 2
+~~~
+
+Read bottom → top:
+
+~~~text
+22₅
+~~~
+
+So:
+
+~~~text
+3 × 4 = 22₅
+~~~
+
+Write 2 and carry 2.
+
+Next:
+
+~~~text
+2 × 4 + 2 = 10₁₀
+~~~
+
+Convert 10 decimal to base 5:
+
+~~~text
+10 ÷ 5 = 2 R 0
+ 2 ÷ 5 = 0 R 2
+~~~
+
+So:
+
+~~~text
+10₁₀ = 20₅
+~~~
+
+Therefore:
+
+~~~text
+   23₅
+×   4₅
+-------
+  202₅
+~~~
+
+Then multiply by the next digit:
+
+~~~text
+23₅ × 1₅ = 23₅
+~~~
+
+Shift left:
+
+~~~text
+230₅
+~~~
+
+Add:
+
+~~~text
+  202₅
++ 230₅
+-------
+  432₅
+~~~
+
+So:
+
+~~~text
+23₅ × 14₅ = 432₅
+~~~
+
+### The mistake I made at first
+
+I saw:
+
+~~~text
+3 × 4 = 12
+~~~
+
+and wondered why I could not simply leave 12.
+
+The reason:
+
+~~~text
+12₅ ≠ 12₁₀
+~~~
+
+The multiplication gives the quantity 12 decimal. I then have to represent that quantity in base 5:
+
+~~~text
+12₁₀ → 22₅
+~~~
+
+That distinction is important.
+
+---
+
+# 17. Division — the two main methods
+
+For division I have the same two main paths.
+
+### Method 1 — Conversion / middleman
+
+~~~text
+base-r dividend → decimal
+base-r divisor  → decimal
+        ↓
+      divide
+        ↓
+decimal answer → base-r
+~~~
+
+I already understood this method fairly quickly.
+
+### Method 2 — Direct base-r long division
+
+~~~text
+base-r dividend ÷ base-r divisor
+          ↓
+       long division
+          ↓
+     base-r answer
+~~~
+
+This is the method I was struggling with.
+
+---
+
+# 18. Direct division — the actual algorithm
+
+The structure is:
+
+~~~text
+start from the left
+        ↓
+take enough digits so divisor fits
+        ↓
+find quotient digit
+        ↓
+multiply divisor × quotient digit
+        ↓
+subtract
+        ↓
+↓ bring down next dividend digit
+        ↓
+repeat
+~~~
+
+The crucial rule:
+
+> **Do not decide a fixed number of digits to take.**
+
+Start from the left and keep taking digits until the current chunk is at least as large as the divisor.
+
+For binary, quotient digits are only 0 or 1.
+
+For base 6, quotient digits are:
+
+~~~text
+0 1 2 3 4 5
+~~~
+
+---
+
+# 19. Why direct division felt harder than it looked
+
+I initially saw something like:
+
+~~~text
+54₆ × 4₆ = 344₆
+~~~
+
+and it looked like I was supposed to magically know that.
+
+I am not.
+
+That multiplication is another calculation.
+
+~~~text
+   54₆
+×   4₆
+------
+~~~
+
+Rightmost:
+
+~~~text
+4 × 4 = 16₁₀
+~~~
+
+Now convert 16 decimal to base 6:
+
+~~~text
+16 ÷ 6 = 2 R 4
+ 2 ÷ 6 = 0 R 2
+~~~
+
+Bottom → top:
+
+~~~text
+24₆
+~~~
+
+Write 4, carry 2.
+
+Next:
+
+~~~text
+5 × 4 + 2 = 22₁₀
+~~~
+
+Convert:
+
+~~~text
+22 ÷ 6 = 3 R 4
+ 3 ÷ 6 = 0 R 3
+~~~
+
+So:
+
+~~~text
+22₁₀ = 34₆
+~~~
+
+Therefore:
+
+~~~text
+   54₆
+×   4₆
+------
+  344₆
+~~~
+
+Nothing is magic.
+
+> **If I do not know an intermediate result, I work it out.**
+
+---
+
+# 20. Complete direct base-6 division example
+
+Example:
+
+~~~text
+1354₆ ÷ 54₆
+~~~
+
+No whole-problem conversion to decimal.
+
+## Step 1 — find where to start
+
+From the left:
+
+~~~text
+1₆ < 54₆
+13₆ < 54₆
+135₆ ≥ 54₆
+~~~
+
+So start with 135₆.
+
+## Step 2 — first quotient digit
+
+Try 1:
+
+~~~text
+54₆ × 1₆ = 54₆
+~~~
+
+Try 2. Work it out:
+
+~~~text
+4 × 2 = 8₁₀
+8 ÷ 6 = 1 R 2
+→ 12₆
+~~~
+
+Write 2, carry 1.
+
+~~~text
+5 × 2 + 1 = 11₁₀
+11 ÷ 6 = 1 R 5
+→ 15₆
+~~~
+
+Therefore:
+
+~~~text
+54₆ × 2₆ = 152₆
+~~~
+
+But:
+
+~~~text
+152₆ > 135₆
+~~~
+
+So 2 is too large.
+
+The first quotient digit is 1.
+
+Subtract:
+
+~~~text
+  135₆
+- 054₆
+-------
+   41₆
+~~~
+
+## Step 3 — bring down the next digit
+
+The remaining dividend digit is 4:
+
+~~~text
+   41₆
+     ↓ bring down 4
+   414₆
+~~~
+
+Now find the next quotient digit.
+
+A useful estimate says it should be around 4–5, so I test those rather than blindly testing every digit.
+
+### Test 4
+
+~~~text
+54₆ × 4₆
+~~~
+
+Rightmost:
+
+~~~text
+4 × 4 = 16₁₀
+16 ÷ 6 = 2 R 4
+→ 24₆
+~~~
+
+Write 4, carry 2.
+
+Next:
+
+~~~text
+5 × 4 + 2 = 22₁₀
+22 ÷ 6 = 3 R 4
+→ 34₆
+~~~
+
+Therefore:
+
+~~~text
+54₆ × 4₆ = 344₆
+~~~
+
+### Test 5
+
+~~~text
+4 × 5 = 20₁₀
+20 ÷ 6 = 3 R 2
+→ 32₆
+~~~
+
+Write 2, carry 3.
+
+~~~text
+5 × 5 + 3 = 28₁₀
+28 ÷ 6 = 4 R 4
+→ 44₆
+~~~
+
+Therefore:
+
+~~~text
+54₆ × 5₆ = 442₆
+~~~
+
+Compare:
+
+~~~text
+344₆ < 414₆ < 442₆
+~~~
+
+So the quotient digit is 4.
+
+Subtract:
+
+~~~text
+  414₆
+- 344₆
+-------
+   30₆
+~~~
+
+No more dividend digits remain.
+
+Therefore:
+
+~~~text
+1354₆ ÷ 54₆ = 14₆ remainder 30₆
+~~~
+
+---
+
+# 21. The shortcut I discovered
+
+I do **not** necessarily need to calculate:
+
+~~~text
+54₆ × 1
+54₆ × 2
+54₆ × 3
+54₆ × 4
+54₆ × 5
+~~~
+
+every time.
+
+I can:
+
+1. **Estimate** the quotient digit.
+2. **Test** the likely candidate.
+3. If it fits, check the next digit if necessary.
+4. Choose the largest one that still fits.
+
+For:
+
+~~~text
+414₆ ÷ 54₆
+~~~
+
+I expect something around 4–5.
+
+So calculate:
+
+~~~text
+54₆ × 4₆ = 344₆
+54₆ × 5₆ = 442₆
+~~~
+
+Then:
+
+~~~text
+344₆ < 414₆ < 442₆
+~~~
+
+So the quotient digit is 4.
+
+This is the practical shortcut.
+
+---
+
+# 22. Another shortcut: decimal as a helper
+
+There is another useful way to find those multiples.
+
+First convert only the divisor:
+
+~~~text
+54₆
+= 5(6) + 4
+= 30 + 4
+= 34₁₀
+~~~
+
+Then:
+
+~~~text
+34 × 3 = 102₁₀
+34 × 4 = 136₁₀
+34 × 5 = 170₁₀
+~~~
+
+Convert those results back to base 6:
+
+~~~text
+102₁₀ → 250₆
+136₁₀ → 344₆
+170₁₀ → 442₆
+~~~
+
+So:
+
+~~~text
+344₆ < 414₆ < 442₆
+~~~
+
+and the quotient digit is 4.
+
+This works mathematically, but it is **not pure direct base-6 arithmetic**. Decimal is acting as a middleman/helper.
+
+So I should keep the three approaches clearly separated:
+
+~~~text
+DIRECT
+base-r → arithmetic directly in base-r
+
+CONVERSION / MIDDLEMAN
+base-r → decimal → arithmetic → base-r
+
+HYBRID HELPER
+base-r divisor → decimal
+               → useful multiples
+               → base-r
+~~~
+
+If the question says **"base 6 only"** or **"without converting to decimal"**, I cannot use the middleman/hybrid method.
+
+---
+
+# 23. The exam decision rule
+
+Before starting a division question, ask:
+
+> **Does the question restrict the method?**
+
+### If it just says "divide"
+
+The conversion/middleman method is valid:
+
+~~~text
+base-r → decimal → divide → base-r
+~~~
+
+### If it says "using base-r"
+
+Use direct long division.
+
+### If it says "without converting to decimal"
+
+Use direct long division.
+
+### If there is no restriction but I want speed
+
+The conversion method is usually simpler.
+
+### If I need to demonstrate base-r arithmetic
+
+Use direct.
+
+The course material explicitly lists **Base-R multiplication and Base-R division** as Lecture 1 topics. fileciteturn1file0L10-L25
+
+---
+
+# 24. What I was actually struggling with
+
+The problem was not simply "I don't understand division."
+
+I kept seeing intermediate answers appear without seeing **where they came from**.
+
+For example:
+
+~~~text
+54₆ × 4₆ = 344₆
+~~~
+
+I needed to see:
+
+~~~text
+4 × 4 = 16₁₀
+16₁₀ → 24₆
+
+5 × 4 + 2 = 22₁₀
+22₁₀ → 34₆
+
+therefore 344₆
+~~~
+
+And even:
+
+~~~text
+16₁₀ → 24₆
+~~~
+
+is not magic:
+
+~~~text
+16 ÷ 6 = 2 R 4
+2 ÷ 6 = 0 R 2
+→ 24₆
+~~~
+
+That was the missing layer.
+
+### My rule for future notes
+
+> **Never let an intermediate result become "magic."**
+>
+> If I don't know where it came from, expand that step.
+
+---
+
+# 25. My clean mental map
+
+~~~text
+NUMBER SYSTEMS
+│
+├── CONVERSION
+│   ├── Base-r → Decimal
+│   │      → place value
+│   │
+│   ├── Decimal → Base-r
+│   │      → repeated division by target base
+│   │
+│   └── Base-r → Base-r
+│          → decimal as middleman
+│
+└── ARITHMETIC
+    │
+    ├── DIRECT
+    │   └── stay in the original base
+    │
+    └── CONVERSION / MIDDLEMAN
+        └── convert → decimal arithmetic → convert back
+~~~
+
+For division:
+
+~~~text
+DIVISION
+│
+├── CONVERSION
+│   base-r → decimal
+│          → divide
+│          → base-r
+│
+├── DIRECT
+│   long division
+│   → choose quotient digit
+│   → multiply
+│   → subtract
+│   → ↓ bring down
+│   → repeat
+│
+└── HYBRID HELPER
+    convert divisor to decimal
+    → calculate useful multiples
+    → convert multiples back
+    → compare
+~~~
+
+---
+
+# 26. Where I am now
+
+I understand:
+
+- place value
+- binary → decimal
+- decimal → binary
+- fractional decimal → binary
+- arbitrary-base conversion
+- addition in another base
+- carrying
+- subtraction in another base
+- borrowing
+- multiplication in another base
+- direct vs conversion methods
+- base-r direct division
+- how to choose quotient digits
+- why intermediate multiplication must actually be calculated
+- how to convert an intermediate decimal result back to the working base
+- the decimal-middleman shortcut
+- when the shortcut is and isn't allowed
+
+The biggest lesson from this part was:
+
+> **Don't let an intermediate step become "magic."**
+
+If I need:
+
+~~~text
+54₆ × 4₆
+~~~
+
+I calculate it.
+
+If I get:
+
+~~~text
+16₁₀
+~~~
+
+and need base 6, I convert it.
+
+If I use decimal as a helper, I know I'm using a **middleman/helper method**, not pretending it was direct.
+
+That distinction keeps the whole topic organized in my head.
+
+---
+
+## Next
+
+Move on after I have done a few more direct base-r division problems. I do not need to keep re-learning the concept; I need enough practice for the quotient-digit selection and bring-down process to become automatic.
