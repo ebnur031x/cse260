@@ -658,6 +658,16 @@ So:
 ~~~
 
 Write 2 and carry 2.
+NOW HOW to know which one is WRITE and CARRY?
+
+* rightmost digit → write
+* remaining digit(s) → carry
+Example in base 6:
+
+5 * 2 = 10(10) = 14(60) <- 
+So:
+- Write 4 (rightmost)
+- Carry 1 (carry, the next digit to the left)
 
 Next:
 
