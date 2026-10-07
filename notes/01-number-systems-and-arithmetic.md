@@ -913,7 +913,7 @@ So take one more digit:
 Step 2: How many times does \(54_6\) fit into \(135_6\)?
 
 54*2=144(6) [everything in base 6] 
-144>135, so 54*1 is good.
+144>135, so 54 * 1=54 is good.
 
 So the first quotient digit is: 1
 
