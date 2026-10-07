@@ -326,6 +326,8 @@ Rather:
 
 So when a calculation produces 8 or more, I represent that quantity using the next position.
 
+**One position can contain exactly one digit**
+One position = one digit. (LOCK IN)
 ---
 
 # 9. Addition — what carry really means
