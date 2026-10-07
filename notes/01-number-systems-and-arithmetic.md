@@ -902,156 +902,49 @@ Example:
 
 No whole-problem conversion to decimal.
 
-## Step 1 — find where to start
+Step 1: Take the first two digits
+Divisor = 54(6)
+Start with = 13(6)
+Can 54(6) fit into 13(6)?
+No, because \(13_6 < 54_6\).
+So take one more digit:
 
-From the left:
+135(6)
+Step 2: How many times does \(54_6\) fit into \(135_6\)?
 
-~~~text
-1₆ < 54₆
-13₆ < 54₆
-135₆ ≥ 54₆
-~~~
+54*2=144(6) [everything in base 6] 
+144>135, so 54*1 is good.
 
-So start with 135₆.
+So the first quotient digit is: 1
 
-## Step 2 — first quotient digit
+NOW subtract: 135(6)-54(60=41(6)
 
-Try 1:
+Step 3: Bring down the next digit, which 4 from 135[4] <-
 
-~~~text
-54₆ × 1₆ = 54₆
-~~~
+bring it down, 414(6)
 
-Try 2. Work it out:
+try possible combo, 
+54(6)*5= 450
+54 * 4 = 344
 
-~~~text
-4 × 2 = 8₁₀
-8 ÷ 6 = 1 R 2
-→ 12₆
-~~~
+good.
 
-Write 2, carry 1.
+the next quotient digit is 4
 
-~~~text
-5 × 2 + 1 = 11₁₀
-11 ÷ 6 = 1 R 5
-→ 15₆
-~~~
+now, 414-344(6)=30(6)
+so:
+1354/54=14(6) R 30(6)
 
-Therefore:
-
-~~~text
-54₆ × 2₆ = 152₆
-~~~
-
-But:
-
-~~~text
-152₆ > 135₆
-~~~
-
-So 2 is too large.
-
-The first quotient digit is 1.
-
-Subtract:
-
-~~~text
-  135₆
-- 054₆
--------
-   41₆
-~~~
-
-## Step 3 — bring down the next digit
-
-The remaining dividend digit is 4:
-
-~~~text
-   41₆
-     ↓ bring down 4
-   414₆
-~~~
-
-Now find the next quotient digit.
-
-A useful estimate says it should be around 4–5, so I test those rather than blindly testing every digit.
-
-### Test 4
-
-~~~text
-54₆ × 4₆
-~~~
-
-Rightmost:
-
-~~~text
-4 × 4 = 16₁₀
-16 ÷ 6 = 2 R 4
-→ 24₆
-~~~
-
-Write 4, carry 2.
-
-Next:
-
-~~~text
-5 × 4 + 2 = 22₁₀
-22 ÷ 6 = 3 R 4
-→ 34₆
-~~~
-
-Therefore:
-
-~~~text
-54₆ × 4₆ = 344₆
-~~~
-
-### Test 5
-
-~~~text
-4 × 5 = 20₁₀
-20 ÷ 6 = 3 R 2
-→ 32₆
-~~~
-
-Write 2, carry 3.
-
-~~~text
-5 × 5 + 3 = 28₁₀
-28 ÷ 6 = 4 R 4
-→ 44₆
-~~~
-
-Therefore:
-
-~~~text
-54₆ × 5₆ = 442₆
-~~~
-
-Compare:
-
-~~~text
-344₆ < 414₆ < 442₆
-~~~
-
-So the quotient digit is 4.
-
-Subtract:
-
-~~~text
-  414₆
-- 344₆
--------
-   30₆
-~~~
-
-No more dividend digits remain.
-
-Therefore:
-
-~~~text
-1354₆ ÷ 54₆ = 14₆ remainder 30₆
+     The whole process:
+54₆ ) 1354₆(14
+       54
+      ---
+       41
+        ↓ 4
+       414
+       344
+       ---
+        30
 ~~~
 
 ---
