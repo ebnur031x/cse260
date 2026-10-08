@@ -961,9 +961,10 @@ write 4, carry 3
 ----
 344(6)
 
-good.
-
-the next quotient digit is 4
+414
+344
+-----
+ 30
 
 now, 414-344(6)=30(6)
 so:
