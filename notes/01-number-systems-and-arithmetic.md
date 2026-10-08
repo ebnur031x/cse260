@@ -925,7 +925,41 @@ bring it down, 414(6)
 
 try possible combo, 
 54(6)*5= 450
-54 * 4 = 344
+54 * 4 = 344 (also in base 6)
+
+lets do this: 54 * 4 = ?
+54
+ 4
+----
+4 * 4 = 16(10)
+Convert 16 to base 6:
+
+16/6 = 2 r 4
+2/6 = 0 r 2
+
+so, 24(6)
+
+write 4, carry 2
+
+54
+ 4
+----
+ 4
+
+so, 5 * 4 + 2 = 22(10)
+
+convert 22 to base 6.
+22 / 6 = 3 r 4
+3 / 6 = 0 r 3
+
+so, 34
+write 4, carry 3
+
+34(6)
+54
+ 4
+----
+344(6)
 
 good.
 
